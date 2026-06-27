@@ -2,13 +2,13 @@ loadstring(game:HttpGet(("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V
 
        local Window = MakeWindow({
          Hub = {
-         Title = "TienHub",
-         Animation = "Loading..."
+         Title = "TBoy Roblox",
+         Animation = "Youtube: TBoy Roblox"
          },
         Key = {
         KeySystem = false,
         Title = "Key System",
-        Description = "", 
+        Description = "",
         KeyLink = "",
         Keys = {"1234"},
         Notifi = {
@@ -45,3 +45,28 @@ loadstring(game:HttpGet(("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V
 loadstring(game:HttpGet("https://raw.githubusercontent.com/realredz/BloxFruits/refs/heads/main/Source.lua"))(Settings)
   end
   })
+  --Tap: Auto Fram
+  local farmTab = Window:CreateTab("Auto Farm", "rbxassetid://1234567890")
+farmTab:CreateToggle({
+    Name = "Bật/Tắt Auto Farm",
+    CurrentValue = false,
+    Callback = function(value)
+        autoFarm = value
+        if value then
+            print("Auto Farm đã được kích hoạt")
+            startAutoFarm()
+        else
+            print("Auto Farm đã tắt")
+            stopAutoFarm()
+        end
+    end
+})
+
+farmTab:CreateDropdown({
+    Name = "Chọn loại quái cần farm",
+    Options = {"Quái rừng", "Boss", "NPC nhiệm vụ"},
+    CurrentOption = "Quái rừng",
+    Callback = function(option)
+        targetFruit = option
+    end
+})
