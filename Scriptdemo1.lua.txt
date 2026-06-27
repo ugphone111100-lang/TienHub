@@ -1,0 +1,64 @@
+local pvpMode = false
+local aimAssist = false
+
+-- Phát hiện đối thủ gần nhất
+function getNearestPlayer()
+    local nearest = nil
+    local minDist = math.huge
+    for _, player in pairs(players:GetPlayers()) do
+        if player ~= localPlayer then
+            local char = player.Character
+            if char and char:FindFirstChild("HumanoidRootPart") then
+                local dist = (humanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude
+                if dist < minDist then
+                    minDist = dist
+                    nearest = char
+                end
+            end
+        end
+    end
+    return nearest
+end
+
+-- Aimbot - Tự động xoay camera về phía đối thủ
+function autoAim()
+    local target = getNearestPlayer()
+    if target and aimAssist then
+        local direction = (target.HumanoidRootPart.Position - humanoidRootPart.Position).Unit
+        local yaw = math.atan2(direction.X, direction.Z)
+        local pitch = math.asin(direction.Y)
+        -- Cập nhật góc camera
+        local camera = workspace.CurrentCamera
+        camera.CFrame = CFrame.new(camera.CFrame.Position) * CFrame.Angles(pitch, yaw, 0)
+    end
+end
+
+-- Neo Dodge - Tự động dịch chuyển khi bị tấn công
+game:GetService("RunService").RenderStepped:Connect(function()
+    if pvpMode then
+        -- Phát hiện đòn tấn công (dựa trên Animation hoặc sát thương)
+        local hit = false
+        -- Logic giả định: nếu máu giảm đột ngột
+        if localPlayer.Character.Humanoid.Health < lastHealth then
+            hit = true
+        end
+        lastHealth = localPlayer.Character.Humanoid.Health
+
+        if hit then
+            -- Dịch chuyển ngẫu nhiên theo hướng ngược lại
+            local randomOffset = Vector3.new(math.random(-20, 20), 5, math.random(-20, 20))
+            humanoidRootPart.CFrame = humanoidRootPart.CFrame + randomOffset
+        end
+        autoAim()
+    end
+end)
+
+-- Kích hoạt PVP Mode
+farmTab:CreateToggle({
+    Name = "Chế độ PVP (Aimbot + Dodge)",
+    CurrentValue = false,
+    Callback = function(value)
+        pvpMode = value
+        aimAssist = value
+    end
+})
